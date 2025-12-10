@@ -1,0 +1,154 @@
+const { AuxiliaresMixer, AuxiliaresInterMixer } = require('../models/auxiliares_mixer');
+const { Op } = require('sequelize');
+
+
+// ==================================================
+// ===============  GET GENERAL  ====================
+// ==================================================
+exports.getAll = async (req, res) => {
+    try {
+        const data = await AuxiliaresMixer.findAll({
+            include: [
+                {
+                    model: AuxiliaresInterMixer,
+                    as: 'detalles'
+                }
+            ],
+            order: [['id', 'DESC']]
+        });
+
+        res.json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al obtener los datos' });
+    }
+};
+
+
+
+// ==================================================
+// ===================  POST  ========================
+// Puede recibir:
+// 1) Un solo registro
+// 2) Un array con varios registros
+// ==================================================
+exports.create = async (req, res) => {
+    try {
+
+        let payload = req.body;
+
+        // Si viene solo un registro, lo convertimos en array para tratar igual
+        if (!Array.isArray(payload)) {
+            payload = [payload];
+        }
+
+        const results = [];
+
+        for (const item of payload) {
+
+            // Crear padre
+            const padre = await AuxiliaresMixer.create(item);
+
+            // Crear hijos si existen
+            if (item.detalles && Array.isArray(item.detalles)) {
+                for (const detalle of item.detalles) {
+                    await AuxiliaresInterMixer.create({
+                        ...detalle,
+                        padre_id: padre.id
+                    });
+                }
+            }
+
+            results.push(padre);
+        }
+
+        res.json({
+            message: "Registros creados correctamente",
+            data: results
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al crear los registros" });
+    }
+};
+
+
+
+
+// ==================================================
+// ===================  PUT  =========================
+// Puede recibir:
+// 1) Un solo registro
+// 2) Un array con varios registros
+// ==================================================
+exports.update = async (req, res) => {
+    try {
+        let payload = req.body;
+
+        if (!Array.isArray(payload)) {
+            payload = [payload];
+        }
+
+        const results = [];
+
+        for (const item of payload) {
+
+            const { id, detalles, ...fieldsPadre } = item;
+
+            // Actualizar padre
+            await AuxiliaresMixer.update(fieldsPadre, {
+                where: { id }
+            });
+
+            // Eliminar hijos actuales
+            await AuxiliaresInterMixer.destroy({
+                where: { padre_id: id }
+            });
+
+            // Insertar hijos nuevos
+            if (Array.isArray(detalles)) {
+                for (const det of detalles) {
+                    await AuxiliaresInterMixer.create({
+                        ...det,
+                        padre_id: id
+                    });
+                }
+            }
+
+            results.push(item);
+        }
+
+        res.json({
+            message: "Registros actualizados correctamente",
+            data: results
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al actualizar los registros" });
+    }
+};
+
+
+
+
+// ==================================================
+// ===================  DELETE =======================
+// Se elimina el padre y automáticamente sus hijos
+// gracias al CASCADE de la migración
+// ==================================================
+exports.delete = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await AuxiliaresMixer.destroy({
+            where: { id }
+        });
+
+        res.json({ message: "Registro eliminado correctamente" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al eliminar el registro" });
+    }
+};
