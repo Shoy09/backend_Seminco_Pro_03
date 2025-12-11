@@ -23,6 +23,7 @@ const semanas = require('../routes/api/semanasRoutes');
 const JefeGuardiaAcero = require('../routes/api/jefeGuardiaAceroRoutes');
 const auxiliaresMixerRoutes = require('../routes/api/auxiliaresMixer');
 const auxiliaresLanzadorRoutes = require('../routes/api/auxiliaresLanzador');
+const origenDestinoRoutes = require('../routes/api/origenDestinoRoutes');
 
 
 router.use('/usuarios', usuariosRoutes);  
@@ -44,5 +45,6 @@ router.use('/semana-personali', semanas);
 router.use('/jefe-guardia-acero', JefeGuardiaAcero); 
 router.use('/auxiliares-mixer', auxiliaresMixerRoutes); 
 router.use('/auxiliares-lanzador', auxiliaresLanzadorRoutes); 
+router.use('/origen-destino', origenDestinoRoutes); 
 
 module.exports = router;
