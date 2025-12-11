@@ -5,6 +5,7 @@ const path = require('path');
 const db = require('../config/db');
 const verificarToken = require('../middleware/auth');
 const upload = require('../config/upload');
+const Usuario = require("../models/Usuario");
 
 exports.obtenerUsuarios = [verificarToken, async (req, res) => {
     try {
@@ -204,6 +205,30 @@ exports.obtenerUsuarioPorId = [
             );
             if (rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
             res.status(200).json(rows[0]);
+        } catch (error) {
+            console.error('Error al obtener los datos:', error.message);
+            res.status(500).json({ error: 'Error al obtener los datos' });
+        }
+    }
+];
+
+exports.obtenerJefesGuardia = [
+    verificarToken,
+    async (req, res) => {
+        try {
+            // Buscamos usuarios con cargo "JEFE GUARDIA" y solo traemos nombres y apellidos
+            const jefesGuardia = await Usuario.findAll({
+                attributes: ['nombres', 'apellidos'],
+                where: {
+                    cargo: 'JEFE GUARDIA'
+                }
+            });
+
+            if (jefesGuardia.length === 0) {
+                return res.status(404).json({ error: 'No se encontraron jefes de guardia' });
+            }
+
+            res.status(200).json(jefesGuardia);
         } catch (error) {
             console.error('Error al obtener los datos:', error.message);
             res.status(500).json({ error: 'Error al obtener los datos' });

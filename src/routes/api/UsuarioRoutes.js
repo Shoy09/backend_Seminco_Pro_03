@@ -6,6 +6,8 @@ router.get('/usuarios', usuarioController.obtenerUsuarios);
 
 router.get('/usuarios/:id', usuarioController.obtenerUsuarioPorId);
 
+router.get('/guardia', usuarioController.obtenerJefesGuardia);
+
 router.post('/usuarios', usuarioController.crearUsuario);
 
 router.put('/usuarios/:id/operaciones', usuarioController.actualizarOperacionesAutorizadas);
