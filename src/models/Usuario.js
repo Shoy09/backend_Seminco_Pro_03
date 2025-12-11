@@ -69,7 +69,7 @@ const Usuario = sequelize.define(
         },
       },
     },
-    firma_imagen: {
+    firma: {
       type: DataTypes.STRING,
       allowNull: true, // Puede ser NULL si el usuario no tiene una imagen de firma
     },
