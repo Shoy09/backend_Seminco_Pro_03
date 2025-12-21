@@ -9,6 +9,12 @@ router.post("/", controller.create);
 // GET general
 router.get("/", controller.getAll);
 
+// 🔥 GET pendientes de firma por jefe_guardia
+router.get(
+  "/pendientes",
+  controller.getPendientesFirmaJefe
+);
+
 // PUT actualizar uno o varios
 router.put("/", controller.update);
 
