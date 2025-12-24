@@ -7,6 +7,11 @@ const controller = require('../../controllers/auxiliaresMixer.js');
 // === GET GENERAL ===
 router.get('/', controller.getAll);
 
+router.get(
+  "/pendientes",
+  controller.getPendientesFirmaJefeMixer
+);
+
 // === POST (1 o varios) ===
 router.post('/', controller.create);
 

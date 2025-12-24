@@ -152,3 +152,41 @@ exports.delete = async (req, res) => {
         res.status(500).json({ message: "Error al eliminar el registro" });
     }
 };
+
+
+exports.getPendientesFirmaJefeMixer = async (req, res) => {
+  try {
+    const { jefe_guardia } = req.query;
+
+    if (!jefe_guardia) {
+      return res.status(400).json({
+        error: "Debe enviar el jefe_guardia"
+      });
+    }
+
+    const data = await AuxiliaresMixer.findAll({
+      where: {
+        jefe_guardia: jefe_guardia,
+        [Op.or]: [
+          { firma_jefe_guardia: null },
+          { firma_jefe_guardia: "" }
+        ]
+      },
+      include: [
+        {
+          model: AuxiliaresInterMixer,
+          as: 'detalles'
+        }
+      ],
+      order: [['fecha', 'DESC']]
+    });
+
+    res.json(data);
+
+  } catch (error) {
+    console.error('Error getPendientesFirmaJefeMixer:', error);
+    res.status(500).json({
+      error: "Error al obtener registros pendientes de firma (Mixer)"
+    });
+  }
+};
