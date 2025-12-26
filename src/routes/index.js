@@ -24,6 +24,7 @@ const JefeGuardiaAcero = require('../routes/api/jefeGuardiaAceroRoutes');
 const auxiliaresMixerRoutes = require('../routes/api/auxiliaresMixer');
 const auxiliaresLanzadorRoutes = require('../routes/api/auxiliaresLanzador');
 const origenDestinoRoutes = require('../routes/api/origenDestinoRoutes');
+const VolquetesRoutes = require('../routes/api/volquetes');
 
 
 router.use('/usuarios', usuariosRoutes);  
@@ -46,5 +47,6 @@ router.use('/jefe-guardia-acero', JefeGuardiaAcero);
 router.use('/auxiliares-mixer', auxiliaresMixerRoutes); 
 router.use('/auxiliares-lanzador', auxiliaresLanzadorRoutes); 
 router.use('/origen-destino', origenDestinoRoutes); 
+router.use('/volquetes', VolquetesRoutes); 
 
 module.exports = router;
