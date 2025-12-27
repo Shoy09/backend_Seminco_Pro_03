@@ -18,6 +18,9 @@ router.post('/', controller.create);
 // === PUT (1 o varios) ===
 router.put('/', controller.update);
 
+// UPDATE por id de padre + it
+router.put("/update-it", controller.updateByPadreIt);
+
 // === DELETE POR ID ===
 router.delete('/:id', controller.delete);
 

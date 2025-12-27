@@ -160,3 +160,74 @@ exports.getPendientesFirmaJefe = async (req, res) => {
     }
 };
 
+// ======================================================
+// ========== UPDATE PADRE + HIJOS POR PADRE_ID =========
+// ======================================================
+// Recibe uno o varios registros
+exports.updateByPadreIt = async (req, res) => {
+    try {
+        const data = Array.isArray(req.body) ? req.body : [req.body];
+        const results = [];
+
+        for (const padre of data) {
+
+            // 🔴 obligatorio
+            if (!padre.id) continue;
+
+            const { detalles, ...padreData } = padre;
+
+            // ======================================================
+            // ================= ACTUALIZAR PADRE ==================
+            // ======================================================
+            await AuxiliaresLanzador.update(padreData, {
+                where: { id: padre.id }
+            });
+
+            // ======================================================
+            // ================= ACTUALIZAR HIJOS ==================
+            // ======================================================
+            if (detalles && Array.isArray(detalles)) {
+
+                for (const det of detalles) {
+
+                    // it es obligatorio
+                    if (!det.it) continue;
+
+                    const [updated] = await AuxiliaresInterLanzador.update(
+                        det,
+                        {
+                            where: {
+                                padre_id: padre.id,
+                                it: det.it
+                            }
+                        }
+                    );
+
+                    // 🟡 OPCIONAL: si no existe, crear
+                    if (updated === 0) {
+                        await AuxiliaresInterLanzador.create({
+                            ...det,
+                            padre_id: padre.id
+                        });
+                    }
+                }
+            }
+
+            results.push({
+                id: padre.id,
+                actualizado: true
+            });
+        }
+
+        res.json({
+            message: "Padre e hijos actualizados correctamente",
+            data: results
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Error al actualizar registros por padre + it"
+        });
+    }
+};

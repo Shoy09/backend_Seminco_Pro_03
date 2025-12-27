@@ -18,6 +18,9 @@ router.get(
 // PUT actualizar uno o varios
 router.put("/", controller.update);
 
+// UPDATE por id de padre + it
+router.put("/update-it", controller.updateByPadreIt);
+
 // DELETE eliminar padre + hijos
 router.delete("/:id", controller.delete);
 
