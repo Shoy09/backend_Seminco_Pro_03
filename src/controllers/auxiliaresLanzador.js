@@ -190,21 +190,30 @@ exports.updateByPadreIt = async (req, res) => {
 
                 for (const det of detalles) {
 
-                    // it es obligatorio
+                    // 🔴 it es obligatorio
                     if (!det.it) continue;
 
-                    const [updated] = await AuxiliaresInterLanzador.update(
-                        det,
-                        {
-                            where: {
-                                padre_id: padre.id,
-                                it: det.it
-                            }
+                    // 🔹 1. BUSCAR SI EL HIJO EXISTE
+                    const existe = await AuxiliaresInterLanzador.findOne({
+                        where: {
+                            padre_id: padre.id,
+                            it: det.it
                         }
-                    );
+                    });
 
-                    // 🟡 OPCIONAL: si no existe, crear
-                    if (updated === 0) {
+                    if (existe) {
+                        // 🔹 2. SI EXISTE → ACTUALIZAR (aunque no cambie nada)
+                        await AuxiliaresInterLanzador.update(
+                            det,
+                            {
+                                where: {
+                                    padre_id: padre.id,
+                                    it: det.it
+                                }
+                            }
+                        );
+                    } else {
+                        // 🔹 3. SI NO EXISTE → CREAR
                         await AuxiliaresInterLanzador.create({
                             ...det,
                             padre_id: padre.id

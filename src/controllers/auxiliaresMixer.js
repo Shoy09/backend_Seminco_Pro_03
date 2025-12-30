@@ -221,21 +221,30 @@ exports.updateByPadreIt = async (req, res) => {
 
                 for (const det of detalles) {
 
-                    // it es obligatorio
+                    // 🔴 it es obligatorio
                     if (!det.it) continue;
 
-                    const [updated] = await AuxiliaresInterMixer.update(
-                        det,
-                        {
-                            where: {
-                                padre_id: padre.id,
-                                it: det.it
-                            }
+                    // 🔹 1. VERIFICAR SI EL HIJO EXISTE
+                    const existe = await AuxiliaresInterMixer.findOne({
+                        where: {
+                            padre_id: padre.id,
+                            it: det.it
                         }
-                    );
+                    });
 
-                    // 🟡 OPCIONAL: si no existe, crear
-                    if (updated === 0) {
+                    if (existe) {
+                        // 🔹 2. SI EXISTE → ACTUALIZAR
+                        await AuxiliaresInterMixer.update(
+                            det,
+                            {
+                                where: {
+                                    padre_id: padre.id,
+                                    it: det.it
+                                }
+                            }
+                        );
+                    } else {
+                        // 🔹 3. SI NO EXISTE → CREAR
                         await AuxiliaresInterMixer.create({
                             ...det,
                             padre_id: padre.id
