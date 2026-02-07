@@ -25,7 +25,10 @@ const auxiliaresMixerRoutes = require('../routes/api/auxiliaresMixer');
 const auxiliaresLanzadorRoutes = require('../routes/api/auxiliaresLanzador');
 const origenDestinoRoutes = require('../routes/api/origenDestinoRoutes');
 const VolquetesRoutes = require('../routes/api/volquetes');
-
+const CondicionesRoutes = require('../routes/api/CondicionesRoutes');
+const TipoSostenimientoRoutes = require('../routes/api/TipoSostenimientoRoutes');
+const EspesoresRoutes = require('../routes/api/espesorRoutes');
+const RocasRoutes = require('../routes/api/roca');
 
 router.use('/usuarios', usuariosRoutes);  
 router.use('/auth', authRoutes);  
@@ -48,5 +51,9 @@ router.use('/auxiliares-mixer', auxiliaresMixerRoutes);
 router.use('/auxiliares-lanzador', auxiliaresLanzadorRoutes); 
 router.use('/origen-destino', origenDestinoRoutes); 
 router.use('/volquetes', VolquetesRoutes); 
+router.use('/condiciones-labor', CondicionesRoutes); 
+router.use('/tipo-sotenimiento', TipoSostenimientoRoutes); 
+router.use('/espesores', EspesoresRoutes); 
+router.use('/rocas', RocasRoutes); 
 
 module.exports = router;
