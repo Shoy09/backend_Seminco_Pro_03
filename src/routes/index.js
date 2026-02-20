@@ -29,6 +29,7 @@ const CondicionesRoutes = require('../routes/api/CondicionesRoutes');
 const TipoSostenimientoRoutes = require('../routes/api/TipoSostenimientoRoutes');
 const EspesoresRoutes = require('../routes/api/espesorRoutes');
 const RocasRoutes = require('../routes/api/roca');
+const PernoSostenimientoRoutes = require('../routes/api/PernoSostenimiento');
 
 router.use('/usuarios', usuariosRoutes);  
 router.use('/auth', authRoutes);  
@@ -55,5 +56,6 @@ router.use('/condiciones-labor', CondicionesRoutes);
 router.use('/tipo-sotenimiento', TipoSostenimientoRoutes); 
 router.use('/espesores', EspesoresRoutes); 
 router.use('/rocas', RocasRoutes); 
+router.use('/pernos-sostenimiento', PernoSostenimientoRoutes); 
 
 module.exports = router;

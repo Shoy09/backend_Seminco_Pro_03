@@ -17,6 +17,37 @@ exports.obtenerUsuarios = [verificarToken, async (req, res) => {
     }
 }];
 
+exports.obtenerOperadores = [
+  verificarToken,
+  async (req, res) => {
+    try {
+      const cargos = [
+        'Op. Robot',
+        'Op. Bolter',
+        'Op. Mixer',
+        'Ayudante'
+      ];
+
+      const usuarios = await Usuario.findAll({
+        attributes: ['apellidos', 'nombres', 'cargo'], // ✅ AGREGADO cargo
+        where: {
+          cargo: {
+            [Op.in]: cargos
+          }
+        },
+        order: [['apellidos', 'ASC']]
+      });
+
+      res.status(200).json(usuarios);
+    } catch (error) {
+      console.error('Error al obtener operadores:', error);
+      res.status(500).json({ error: 'Error al obtener operadores' });
+    }
+  }
+];
+
+
+
 exports.obtenerUsuarioPorId = [verificarToken, async (req, res) => {
     const { id } = req.params;
     try {

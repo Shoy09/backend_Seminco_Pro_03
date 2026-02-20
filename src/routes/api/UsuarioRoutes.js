@@ -4,6 +4,8 @@ const usuarioController = require('../../controllers/UsuarioController');
 
 router.get('/usuarios', usuarioController.obtenerUsuarios);
 
+router.get('/operadores', usuarioController.obtenerOperadores);
+
 router.get('/usuarios/:id', usuarioController.obtenerUsuarioPorId);
 
 router.get('/guardia', usuarioController.obtenerJefesGuardia);
