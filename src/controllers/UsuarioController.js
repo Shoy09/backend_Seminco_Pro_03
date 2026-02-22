@@ -6,6 +6,7 @@ const db = require('../config/db');
 const verificarToken = require('../middleware/auth');
 const upload = require('../config/upload');
 const Usuario = require("../models/Usuario");
+const { Op } = require('sequelize');
 
 exports.obtenerUsuarios = [verificarToken, async (req, res) => {
     try {
