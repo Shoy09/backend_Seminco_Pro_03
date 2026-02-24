@@ -1,5 +1,4 @@
 const RegistroLabor = require("../models/sostenimiento");
-const verificarToken = require('../middleware/auth');
 const uploadSostenimiento = require('../config/uploadSostenimiento');
 const { Op } = require("sequelize");
 
@@ -7,7 +6,6 @@ const { Op } = require("sequelize");
 // ======================= CREATE ========================
 // ======================================================
 exports.create = [
-  verificarToken,
   uploadSostenimiento.fields([
     { name: 'foto_croquis', maxCount: 1 },
     { name: 'dibujo_croquis', maxCount: 1 }
