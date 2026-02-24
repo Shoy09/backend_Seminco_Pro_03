@@ -1,6 +1,7 @@
 const RegistroLabor = require("../models/sostenimiento");
 const uploadSostenimiento = require('../config/uploadSostenimiento');
 const { Op } = require("sequelize");
+const cloudinary = require('../config/cloudinary');
 
 // ======================================================
 // ======================= CREATE ========================
