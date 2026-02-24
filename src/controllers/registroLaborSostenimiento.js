@@ -11,18 +11,24 @@ exports.create = [
     { name: 'dibujo_croquis', maxCount: 1 }
   ]),
   async (req, res) => {
+
+    const transaction = await RegistroLabor.sequelize.transaction();
+
+    let fotoPublicId = null;
+    let dibujoPublicId = null;
+
     try {
 
-      // 🔹 Obtener URLs generadas por Cloudinary
-      const fotoCroquisUrl = req.files?.foto_croquis
-        ? req.files.foto_croquis[0].path
-        : null;
+      // 🔹 Archivos subidos
+      if (req.files?.foto_croquis) {
+        fotoPublicId = req.files.foto_croquis[0].filename;
+      }
 
-      const dibujoCroquisUrl = req.files?.dibujo_croquis
-        ? req.files.dibujo_croquis[0].path
-        : null;
+      if (req.files?.dibujo_croquis) {
+        dibujoPublicId = req.files.dibujo_croquis[0].filename;
+      }
 
-      // 🔹 Desestructurar campos del body
+      // 🔹 Extraer campos
       const {
         fecha,
         turno,
@@ -32,7 +38,6 @@ exports.create = [
         roca,
         labor,
         empresa,
-
         op_robot_bolter_nombre,
         op_robot_bolter_numero,
         op_mixer_ayudante_nombre,
@@ -41,39 +46,49 @@ exports.create = [
         op_mixer_numero,
         supervisor_nombre,
         supervisor_numero,
-
         condiciones_labor,
         ancho,
         alto,
         longitud,
         tipo_sostenimiento,
-
         calibradores_si_no,
         espesor,
         slump,
         presion,
         perno,
         long_perno,
-
         ejecutado_shotcrete1,
         ejecutado_malla1,
         ejecutado_pernos1,
-
         ejecutado_shotcrete2,
         ejecutado_malla2,
         ejecutado_pernos2,
-
         ejecutado_shotcrete3,
         ejecutado_malla3,
         ejecutado_pernos3,
-
         observaciones,
         Operador,
         envio,
         Estado,
       } = req.body;
 
-      // 🔹 Crear registro
+      // 🔥 VALIDACIÓN MÍNIMA (evita registros vacíos)
+      if (!fecha || !turno || !labor || !supervisor_nombre) {
+
+        // limpiar imágenes si ya se subieron
+        if (fotoPublicId) {
+          await cloudinary.uploader.destroy(fotoPublicId);
+        }
+        if (dibujoPublicId) {
+          await cloudinary.uploader.destroy(dibujoPublicId);
+        }
+
+        return res.status(400).json({
+          error: "Faltan campos obligatorios"
+        });
+      }
+
+      // 🔹 Crear registro dentro de transacción
       const nuevoRegistro = await RegistroLabor.create({
 
         fecha,
@@ -119,15 +134,22 @@ exports.create = [
         ejecutado_malla3,
         ejecutado_pernos3,
 
-        // 🔥 AQUÍ guardamos las URLs
-        foto_croquis_path: fotoCroquisUrl,
-        dibujo_croquis_path: dibujoCroquisUrl,
+        foto_croquis_path: req.files?.foto_croquis
+          ? req.files.foto_croquis[0].path
+          : null,
+
+        dibujo_croquis_path: req.files?.dibujo_croquis
+          ? req.files.dibujo_croquis[0].path
+          : null,
 
         observaciones,
         Operador,
         envio,
         Estado,
-      });
+
+      }, { transaction });
+
+      await transaction.commit();
 
       return res.status(201).json({
         message: "Registro creado correctamente",
@@ -135,7 +157,20 @@ exports.create = [
       });
 
     } catch (error) {
+
+      await transaction.rollback();
+
+      // 🔥 LIMPIEZA AUTOMÁTICA SI FALLA TODO
+      if (fotoPublicId) {
+        await cloudinary.uploader.destroy(fotoPublicId);
+      }
+
+      if (dibujoPublicId) {
+        await cloudinary.uploader.destroy(dibujoPublicId);
+      }
+
       console.error("Error al crear registro:", error);
+
       return res.status(500).json({
         error: "Error al crear registro"
       });
