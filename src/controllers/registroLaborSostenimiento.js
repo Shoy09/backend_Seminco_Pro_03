@@ -1,4 +1,6 @@
-const { RegistroLabor } = require("../models");
+const RegistroLabor = require("../models/sostenimiento");
+const verificarToken = require('../middleware/auth');
+const uploadSostenimiento = require('../config/uploadSostenimiento');
 const { Op } = require("sequelize");
 
 // ======================================================
