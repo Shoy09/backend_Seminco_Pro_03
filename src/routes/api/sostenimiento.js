@@ -13,6 +13,9 @@ router.post("/", controller.create);
 // Obtener todos los registros
 router.get("/", controller.getAll);
 
+// Obtener registros por etapa
+router.get("/etapa/:etapa", controller.getPorEtapa);
+
 // ========================
 // ====== FILTROS ========
 // ========================

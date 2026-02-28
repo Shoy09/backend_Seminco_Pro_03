@@ -302,3 +302,46 @@ exports.updateFiltro3 = async (req, res) => {
     });
   }
 };
+
+//GET POR ETAPA Y FILTRO
+
+exports.getPorEtapa = async (req, res) => {
+  try {
+
+    const { etapa } = req.params;
+
+    let whereCondition = {};
+
+    if (etapa == 1) {
+      whereCondition = { filtro1_estado: "pendiente" };
+    }
+
+    if (etapa == 2) {
+      whereCondition = {
+        filtro1_estado: "aprobado",
+        filtro2_estado: "pendiente",
+      };
+    }
+
+    if (etapa == 3) {
+      whereCondition = {
+        filtro1_estado: "aprobado",
+        filtro2_estado: "aprobado",
+        filtro3_estado: "pendiente",
+      };
+    }
+
+    const data = await RegistroLabor.findAll({
+      where: whereCondition,
+      order: [["fecha", "DESC"]],
+    });
+
+    res.json(data);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Error al obtener registros por etapa",
+    });
+  }
+};
